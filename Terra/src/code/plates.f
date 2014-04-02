@@ -71,6 +71,40 @@
 
 	end subroutine
 
+*dk gpl_platestage(stage)
+      subroutine gpl_platestage(istage, gplvel)
+      
+      include 'size.h'
+      include 'pcom.h'
+      include 'para.h'
+   
+      real gplvel(0:mt,mt+1,nd,3)
+      character header
+      integer line
+   
+ 100  format(A3,'.', I4.4,'.',I3.3)
+      write(cname,100) 'gpt', mynum, istage-1
+      open(843, file='TERRA_PLATEMAPS/'//cname, status='old', action='read')
+      
+      do i= 1, 6
+         read(843,*) header
+      end do
+
+      do id= 1, nd
+         do i2= 1, mt+1
+            do i1= 1, mt
+               read(843,*) gplvel(i1, i2, id, 1),
+     &               gplvel(i1, i2, id, 2),
+     &               gplvel(i1, i2, id, 3),
+
+            end do
+         end do
+      end do
+      
+      close(843)
+   
+      end subroutine
+
 
 *dk platestage
 	subroutine platestage(map,stage,nplate_tot)
@@ -323,6 +357,29 @@
 
 	end subroutine
 
+*dk gplreplace
+      subroutine gplreplace(v, gpl_vel)
+   	implicit none
+!	   This routine loads the velocity field into the surface layer
+!	   of array v specified by the surface plate rotations vrtn.
+    
+   	include 'size.h'
+   	include 'pcom.h'
+   	include 'para.h'
+   
+   	integer j,k
+   	real v((nt+1)**2,nd,3,nr+1)
+   	real gpl_vel((nt+1)**2,nd,3)
+
+   	do j=1,nd
+         do k=1,(nt+1)**2
+   		   v(k,j,1,1) = gpl_vel(k,j,1)
+   		   v(k,j,2,1) = gpl_vel(k,j,2)
+   		   v(k,j,3,1) = gpl_vel(k,j,3)
+      	end do
+      end do
+   
+   	end subroutine
 
 *dk platemap_out
 	subroutine platemap_out(map,stage,u,rot,nplate_tot)
