@@ -80,11 +80,13 @@
    
       real gplvel(0:nt,nt+1,nd,3)
       character header
+      character*80 cname
       integer line
    
  100  format(A3,'.', I4.4,'.',I3.3)
       write(cname,100) 'gpt', mynum, istage-1
-      open(843, file='GPLATE_TERRA_PLATEMAPS/'//cname, status='old', action='read')
+      open(843, file='GPLATE_TERRA_PLATEMAPS/'//trim(cname),
+     &  status='old', action='read')
       do i= 1, 6
          read(843,*) header
       end do
@@ -93,7 +95,7 @@
             do i1= 1, nt
                read(843,*) gplvel(i1, i2, id, 1),
      &               gplvel(i1, i2, id, 2),
-     &               gplvel(i1, i2, id, 3),
+     &               gplvel(i1, i2, id, 3)
 
             end do
          end do
