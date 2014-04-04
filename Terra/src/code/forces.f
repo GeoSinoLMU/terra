@@ -187,8 +187,10 @@
 	common /eos1/ rhorf(nr+1), tmprf(nr+1), drhdp(nr+1), grv(nr+1)
 	common /vis1/ vscmax, rvscscl, tvscscl, pwrlawn, pwrlawsr, yldstrs               
 	common /clck/ itmng, sec(50)
+   common /gplv/ SurfVel
 
 	integer map(0:nt,nt+1,nd)
+   real SurfVel(0:nt,nt+1,nd,3)
 	real xn((nt+1)**2*nd,3)
 	real urot(3,pl_size)
 
@@ -228,7 +230,13 @@
 !	and u from last time-step (time 1: u=0)
 !	now, we replace the first layer of the velocity field
 !	by the given plate velocity
-	if(ibc==6) call platevelreplace(u,urot,xn,map)
+	if(ibc==6) then
+      if (pltype==1) then
+         call platevelreplace(u,urot,xn,map)
+      elseif (pltype==2) then
+         call gplreplace(u, SurfVel)
+      endif
+   endif
  
 	if(itmng==1) then
 		call mytime(tout)

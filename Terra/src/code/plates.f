@@ -71,28 +71,26 @@
 
 	end subroutine
 
-*dk gpl_platestage(stage)
-      subroutine gpl_platestage(istage, gplvel)
+*dk gplplatestage(stage)
+      subroutine gplplatestage(istage, gplvel)
       
       include 'size.h'
       include 'pcom.h'
       include 'para.h'
    
-      real gplvel(0:mt,mt+1,nd,3)
+      real gplvel(0:nt,nt+1,nd,3)
       character header
       integer line
    
  100  format(A3,'.', I4.4,'.',I3.3)
       write(cname,100) 'gpt', mynum, istage-1
-      open(843, file='TERRA_PLATEMAPS/'//cname, status='old', action='read')
-      
+      open(843, file='GPLATE_TERRA_PLATEMAPS/'//cname, status='old', action='read')
       do i= 1, 6
          read(843,*) header
       end do
-
       do id= 1, nd
-         do i2= 1, mt+1
-            do i1= 1, mt
+         do i2= 1, nt+1
+            do i1= 1, nt
                read(843,*) gplvel(i1, i2, id, 1),
      &               gplvel(i1, i2, id, 2),
      &               gplvel(i1, i2, id, 3),
@@ -100,9 +98,10 @@
             end do
          end do
       end do
-      
       close(843)
-   
+      
+      gplreplace=gplreplace* 0.3171 * 1.0e-9 
+ 
       end subroutine
 
 

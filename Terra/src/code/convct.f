@@ -167,6 +167,7 @@
 	common /prty/ propr(20)
 	common /name/ titl(4,4)
 	common /clck/ itmng, sec(50)
+   common /gplv/ SurfVel
 
 	integer sta, iskp, nplate_tot, oflag, iadj, nout0
 	integer map(0:nt,nt+1,nd), begstage
@@ -175,6 +176,7 @@
 
 	real a, time_stage(0:pl_size,2)
 	real urtn(3,pl_size,pl_size)
+   real SurfVel(0:nt, nt+1,nd,3)
 
 	real tstepadj(itmax+1), usurf
 	real time, step, tstep, tmp, tstep0
@@ -234,16 +236,24 @@
 
 	! plate initialization (urtn,time_stage)
 	if(ibc==6) then
-		call plateinit(time,urtn,time_stage,begstage,nplate_tot)
-		call platestage(map,int(time_stage(begstage,2)),nplate_tot)		
-		pout=1
-	endif
+      if (pytype==1) then
+   		call plateinit(time,urtn,time_stage,begstage,nplate_tot)
+	   	call platestage(map,int(time_stage(begstage,2)),nplate_tot)
+   		pout=1
+      elseif (pytype==2) then
+         call gplplatestage(int(time_stage(begstage,2), SurfVel)
+   		pout=1
+      else
+         if (mynum==0) write(*,'(A)') 'The input for pltype is not valid!'
+			call MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+         stop
+      endif
+   endif
 	
 !	Begin time step loop
 	sta=begstage
 	do while(time<tsim*velfac.and.step>=stepmin.and.iter<itmax)
-		
-		iter=iter+1
+   	iter=iter+1
 		
 		tstepadj(iter)=tstep
 		time = time + 3.1688e-8*tstep		! seconds-> years
@@ -279,9 +289,11 @@
 				write(6,*)
 				write(6,'(/24x,"PLATE STAGE ",i7/)') int(time_stage(sta,2))
 			endif
-
-			call platestage(map,int(time_stage(sta,2)),nplate_tot)
-			
+         if (pltype==1) then
+   			call platestage(map,int(time_stage(sta,2)),nplate_tot)
+         elseif (pltype==2) then
+     			call gplplatestage(SurfVel,int(time_stage(sta,2)))
+         endif
 			pout=1
 			step = step0
 			tstep = tstep0

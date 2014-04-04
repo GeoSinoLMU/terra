@@ -18,6 +18,7 @@
 	real, parameter:: velfac=1.21			! velocity scaling factor (1.21)
 
 	integer, parameter:: ibc=6				! boundary condition (1: free slip, 6: plates)
+   integer, parameter:: pltype=2          ! Type of plates read in: (1= The old way (By Christopher Conversion), 2=Gplate Way )
 	integer, parameter:: buff=4				! number of plate buffer zones
 	integer, parameter:: plateskp=3			! how many plate stages should be skipped? (use every 'plateskp+1' stages)
 

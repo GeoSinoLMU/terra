@@ -225,10 +225,12 @@
 	common /radl/ rshl(nr+1), ird                                         
 	common /clck/ itmng, sec(50)
 	common /mesh/ xn
+   common /gplv/ SurfVel
 
 	integer ibc0
 	integer map(0:nt,nt+1,nd)
 	real xn((nt+1)**2*nd,3)
+   real SurfVel(0:nt,nt+1,nd,3)
 	real urot(3,pl_size)
 
 	if(itmng==1) call mytime(tin)
@@ -242,7 +244,11 @@
 !	if ibc0==6 and we're on the right level, we impose
 !	the given plate velocities on the uppermost layer 
 	if(ibc0==6.and.kt==nt) then
-		call platevelreplace(u,urot,xn,map)
+      if (pltype==1) then
+   		call platevelreplace(u,urot,xn,map)
+      elseif (pltype==2) then
+         call gplreplace(u, SurfVel)
+      endif
 		call uscale(u,1,0)
 	endif
  
@@ -286,10 +292,12 @@
 	common /mgwk/ w(nv,5)
 	common /radl/ rshl(nr+1), ird
 	common /mesh/ xn
+   common /gplv/ SurfVel
 
 	integer ibc0
 	integer map(0:nt,nt+1,nd)
 	real xn((nt+1)**2*nd,3)
+   real SurfVel(0:nt,nt+1,nd,3)
 	real urot(3,pl_size)
 
 	lvr = 1.45*log(real(kr))
@@ -301,7 +309,11 @@
 		call vbcrdl(u,xm(mxm(lv)),ibc0,kd,kr,kt)
  
 		if(ibc0==6.and.kt==nt) then
-			call platevelreplace(u,urot,xn,map)
+         if (pltype==1) then
+      		call platevelreplace(u,urot,xn,map)
+         elseif (pltype==2) then
+            call gplreplace(u, SurfVel)
+         endif
 			call uscale(u,1,0)
 		endif
 
