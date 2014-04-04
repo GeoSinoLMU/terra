@@ -160,7 +160,7 @@
 
 	do iadj=istart,nadj+1
 	if (mynum==0) write(*,'(A,I1.1,A,I1.1)')
-     &  'Iteration :', iadj,'/',nadj
+     &  'Iteration :', iadj,'/',nadj+1
 !	Perform forward convection calculation.
 !	if(iadj>1) then
 	if(mynum==0) then

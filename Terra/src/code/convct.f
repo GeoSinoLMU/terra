@@ -255,8 +255,6 @@
 	sta=begstage
 	do while(time<tsim*velfac.and.step>=stepmin.and.iter<itmax)
    	iter=iter+1
-		
-       if (mynum==0) write(*,*) time
 		tstepadj(iter)=tstep
 		time = time + 3.1688e-8*tstep		! seconds-> years
 		propr(2) = time
