@@ -1,3 +1,54 @@
+*dk gplinit
+      subroutine gplinit(time, time_stage, begstage, nplate_tot)
+
+
+   	include 'size.h'
+   	include 'pcom.h'
+   	include 'para.h'
+     
+      integer nrstages, numb, i, kk, allpl, nplate_tot
+      integer begstage
+      
+      real pltrecint, time
+      real time_stage(0:pl_size,2)
+      
+
+      nrstages=200      
+
+!     Checks if the number of plate stages is not gt pl_size
+      if (nrstages > pl_size) then
+         if (mynum ==0) then
+            write(*,'(A)') 'Problem with Num Stages!'
+            stop
+         endif
+      endif
+
+
+      numb = floor(real(nrstages)/real(plateskp+1))
+
+      allpl = 0
+      pltrecint=1000000
+      
+      if (numb==0 .and. mynum==0) then
+         write(*,'(A)') 'There are no plate stages available'
+         stop
+      endif
+      
+
+      do i=1,numb
+         time_stage(i,1)=time_stage(i-1,1)
+         do kk=1,plateskp+1
+            time_stage(i,1) = time_stage(i,1)+pltrecint
+            allpl=allpl+1
+! store the actual stage number in the second part of time_stage
+            if(kk==1) time_stage(i,2)=real(allpl)
+         enddo
+         if((tbeg-time/velfac)>time_stage(i,1).and.begstage<numb)
+     &       begstage=i+1
+      enddo
+      time_stage(:,1)=time_stage(:,1)*velfac 
+      end subroutine gplinit
+
 *dk plateinit
 	subroutine plateinit(time,urtn,time_stage,begstage,nplate_tot)
 	implicit none
@@ -81,7 +132,7 @@
       real gplvel(0:nt,nt+1,nd,3)
       character header
       character*80 cname
-      integer line
+      integer line,id,i2,i1,istage
    
  100  format(A3,'.', I4.4,'.',I3.3)
       write(cname,100) 'gpt', mynum, istage-1
@@ -92,7 +143,7 @@
       end do
       do id= 1, nd
          do i2= 1, nt+1
-            do i1= 1, nt
+            do i1= 0, nt
                read(843,*) gplvel(i1, i2, id, 1),
      &               gplvel(i1, i2, id, 2),
      &               gplvel(i1, i2, id, 3)
@@ -102,7 +153,7 @@
       end do
       close(843)
       
-      gplreplace=gplreplace* 0.3171 * 1.0e-9 
+      gplvel=gplvel* 0.3171 * 1.0e-9 
  
       end subroutine
 

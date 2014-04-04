@@ -236,11 +236,12 @@
 
 	! plate initialization (urtn,time_stage)
       if(ibc==6) then
-         if (pytype==1) then
+         if (pltype==1) then
       		call plateinit(time,urtn,time_stage,begstage,nplate_tot)
          	call platestage(map,int(time_stage(begstage,2)),nplate_tot)
       		pout=1
-         elseif (pytype==2) then
+         elseif (pltype==2) then
+            call gplinit(time, time_stage, begstage, nplate_tot)
             call gplplatestage(int(time_stage(begstage,2)), GPLvel)
       		pout=1
          else
@@ -250,12 +251,12 @@
             stop
          endif
       endif
-	
 !	Begin time step loop
 	sta=begstage
 	do while(time<tsim*velfac.and.step>=stepmin.and.iter<itmax)
    	iter=iter+1
 		
+       if (mynum==0) write(*,*) time
 		tstepadj(iter)=tstep
 		time = time + 3.1688e-8*tstep		! seconds-> years
 		propr(2) = time
@@ -293,7 +294,7 @@
          if (pltype==1) then
    			call platestage(map,int(time_stage(sta,2)),nplate_tot)
          elseif (pltype==2) then
-     			call gplplatestage(GPLvel,int(time_stage(sta,2)))
+     			call gplplatestage(int(time_stage(sta,2)), GPLvel)
          endif
 			pout=1
 			step = step0

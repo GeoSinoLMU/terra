@@ -1,7 +1,7 @@
 ! ##### TERRA simulation parameters #####
 
-	integer, parameter:: nadj=5			! number of adjoint iterations (0: just forward simulation)
-	integer, parameter:: init=0 				! type of initialization (-x: restart, 0: tomography, 2: c-file, 17: cube 1-50: see prev. version, 20-49: random field)
+	integer, parameter:: nadj=0			! number of adjoint iterations (0: just forward simulation)
+	integer, parameter:: init=21				! type of initialization (-x: restart, 0: tomography, 2: c-file, 17: cube 1-50: see prev. version, 20-49: random field)
 	
 	integer, parameter:: res_skp_appl=150.0	! residual will not be applied above (km) 150
 	integer, parameter:: res_skp_calc=150.0	! residual will not be calculated above (km) 150
@@ -13,23 +13,23 @@
 
 	integer, parameter:: dpth_shcut=200.0	! cut depth of shear heating calculation (km)
 	
-	real, parameter:: tbeg=30.00e+06		! starting point in the past (years)
-	real, parameter:: tsim=30.00e+06		! simulation time (years)
-	real, parameter:: velfac=1.21			! velocity scaling factor (1.21)
+	real, parameter:: tbeg=10.00e+06		! starting point in the past (years)
+	real, parameter:: tsim=10.00e+06		! simulation time (years)
+	real, parameter:: velfac=2.0 			! velocity scaling factor (1.21)
 
 	integer, parameter:: ibc=6				! boundary condition (1: free slip, 6: plates)
       integer, parameter:: pltype=2          ! Type of plates read in:1:The old way By Christopher Conversion, 2:Gplate
-	integer, parameter:: buff=4				! number of plate buffer zones
-	integer, parameter:: plateskp=3			! how many plate stages should be skipped? (use every 'plateskp+1' stages)
+	integer, parameter:: buff=1				! number of plate buffer zones
+	integer, parameter:: plateskp=0			! how many plate stages should be skipped? (use every 'plateskp+1' stages)
 
-	integer, parameter:: itmax=500000		! maximum number of time steps
+	integer, parameter:: itmax=500		! maximum number of time steps
 	integer, parameter:: npres=10			! number of pressure iterations in forward iteration
 	integer, parameter:: npres_adj=1		! number of pressure iterations in backward iteration
 		
-	integer, parameter:: nout=6			! number of output files incl. first/final step (equal time intervals)
-	integer, parameter:: nout_gmt=11		! number of gmt-output files incl. first/final step (equal time intervals)
+	integer, parameter:: nout=2			! number of output files incl. first/final step (equal time intervals)
+	integer, parameter:: nout_gmt=41		! number of gmt-output files incl. first/final step (equal time intervals)
 	integer, parameter:: isamp=2			! downsampling level for gmt plots (max. 2)
-	integer, parameter:: nout_surf=11		! number of timesteps for heatflux and surface velocity output
+	integer, parameter:: nout_surf=2 	! number of timesteps for heatflux and surface velocity output
 	
 ! (velfac: 1.21 (normal))
 
